@@ -1,3 +1,5 @@
+let eventBus = new Vue()
+
 Vue.component('product-tabs', {
     props: {
         reviews: {
@@ -5,7 +7,6 @@ Vue.component('product-tabs', {
             required: false
         }
     },
-
     template: `
      <div>   
        <ul>
@@ -33,6 +34,7 @@ Vue.component('product-tabs', {
 `,
 
     data() {
+
         return {
             tabs: ['Reviews', 'Make a Review'],
             selectedTab: 'Reviews'  // устанавливается с помощью @click
@@ -40,13 +42,7 @@ Vue.component('product-tabs', {
     }
 })
 
-let eventBus = new Vue({
-    mounted() {
-        eventBus.$on('review-submitted', (productReview) => {
-            this.reviews.push(productReview)
-        })
-    }
-})
+
 
 Vue.component('product-review', {
     template: `
@@ -80,12 +76,14 @@ Vue.component('product-review', {
         </p>
             
         <p>
-            <label for="recomendation">Would you recommended this product?</label>
-            <select id="recomendation" v-model="recomendation">
-                <option>Yes</option>
-                <option>No</option>
-            </select>
-        </p>
+            <span>Would you recommend this product?</span><br>
+        
+            <input type="radio" id="yes" value="Yes" v-model="recomendation">
+            <label for="yes">Yes</label>
+            
+            <input type="radio" id="no" value="No" v-model="recomendation">
+            <label for="no">No</label>
+        </p>    
 
         <p>
           <input type="submit" value="Submit">
@@ -110,11 +108,11 @@ Vue.component('product-review', {
                     rating: this.rating,
                     recomendation: this.recomendation
                 }
-                this.$emit('review-submitted', productReview)
                 this.name = null
                 this.review = null
                 this.rating = null
                 this.recomendation = null
+                eventBus.$emit('review-submitted', productReview)
             } else {
                 if(!this.name) this.errors.push("Name required.")
                 if(!this.review) this.errors.push("Review required.")
@@ -122,9 +120,9 @@ Vue.component('product-review', {
                 if(!this.recomendation) this.errors.push("Recomendation required.")
             }
         },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
+        // addReview(productReview) {
+        //     this.reviews.push(productReview)
+        // }
 
     },
 })
@@ -227,15 +225,13 @@ Vue.component('product', {
         },
         updateProduct(index) {
             this.selectedVariant = index;
-            console.log(index);
         },
-        // mounted() {
-        //     eventBus.$on('review-submitted', productReview => {
-        //         this.reviews.push(productReview)
-        //     })
-        // }
 
-
+    },
+    mounted() {
+        eventBus.$on('review-submitted', productReview => {
+            this.reviews.push(productReview)
+        })
     },
     computed: {
         title() {
