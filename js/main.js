@@ -118,28 +118,33 @@ Vue.component('product-review', {
     },
     methods:{
         onSubmit() {
-            if(this.name && this.review && this.rating && this.recomendation) {
+            this.errors = [];
+
+            if(!this.name) this.errors.push("Name required.");
+            if(!this.review) this.errors.push("Review required.");
+            if(!this.rating) this.errors.push("Rating required.");
+            if(!this.recomendation) this.errors.push("Recomendation required.");
+
+            if(this.rating && this.rating < 4 && this.recomendation === 'Yes') {
+                this.errors.push("You cannot recommend a product with a rating lower than 4.");
+            }
+
+            if(this.errors.length === 0) {
                 let productReview = {
                     name: this.name,
                     review: this.review,
                     rating: this.rating,
                     recomendation: this.recomendation
-                }
-                this.name = null
-                this.review = null
-                this.rating = null
-                this.recomendation = null
-                eventBus.$emit('review-submitted', productReview)
-            } else {
-                if(!this.name) this.errors.push("Name required.")
-                if(!this.review) this.errors.push("Review required.")
-                if(!this.rating) this.errors.push("Rating required.")
-                if(!this.recomendation) this.errors.push("Recomendation required.")
+                };
+
+                eventBus.$emit('review-submitted', productReview);
+                this.name = null;
+                this.review = null;
+                this.rating = null;
+                this.recomendation = null;
             }
-        },
-        // addReview(productReview) {
-        //     this.reviews.push(productReview)
-        // }
+
+        }
 
     },
 })
