@@ -5,6 +5,14 @@ Vue.component('product-tabs', {
         reviews: {
             type: Array,
             required: false
+        },
+        shippingPrice: {
+            type: String,
+            required: true
+        },
+        details: {
+            type: Array,
+            required: true
         }
     },
     template: `
@@ -30,13 +38,22 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
          <product-review></product-review>
        </div>
+       <div v-show="selectedTab === 'Shipping'">
+           <p>Shipping Price: {{ shippingPrice }}</p>
+       </div>
+       <div v-show="selectedTab === 'Details'">
+         <h2>Details:</h2>
+         <ul>
+            <li v-for="detail in details" :key="detail">{{ detail }}</li>
+         </ul>
+       </div>
      </div>
 `,
 
     data() {
 
         return {
-            tabs: ['Reviews', 'Make a Review'],
+            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
             selectedTab: 'Reviews'  // устанавливается с помощью @click
         }
     }
@@ -187,6 +204,8 @@ Vue.component('product', {
         </div>
         <product-tabs 
             :reviews="reviews"
+            :shippingPrice="shipping"
+            :details="details"
             ></product-tabs>
  `,
     data() {
